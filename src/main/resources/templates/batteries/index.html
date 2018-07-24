@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>溯源系统</title>
+
+ <!-- Bootstrap Core CSS -->
+	<link href="../home/vendor/bootstrap/css/bootstrap.min.css"
+	th:href="@{/home/vendor/bootstrap/css/bootstrap.min.css}"
+	rel="stylesheet" type="text/css"></link>
+
+	<link href="../batteries/batteries.css"
+		th:href="@{/batteries/batteries.css}"
+		rel="stylesheet"></link>
+		
+		
+	<!-- DataTables CSS -->
+	<link href="../home/vendor/datatables-plugins/dataTables.bootstrap.css"
+		th:href="@{/home/vendor/datatables-plugins/dataTables.bootstrap.css}"
+		rel="stylesheet" type="text/css"></link>
+	<!-- DataTables Responsive CSS -->
+	<link
+		href="../home/vendor/datatables-responsive/dataTables.responsive.css"
+		th:href="@{/home/vendor/datatables-responsive/dataTables.responsive.css}"
+		rel="stylesheet" type="text/css"></link>
+		
+	<!-- 引入bootstrap input css文件 -->
+	<link
+		href="../bootstrap-fileinput/css/fileinput.css"
+		th:href="@{/bootstrap-fileinput/css/fileinput.css}"
+		rel="stylesheet" type="text/css"></link>
+				
+    <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
+    <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+  	<div class="container-fluid">
+  		<div class="row">
+			<div class="col-lg-12">
+				<h3 class="page-header">
+					<span class="glyphicon glyphicon-download-alt"></span>&nbsp;&nbsp;溯源数据导入
+				</h3>
+			</div>
+				<!-- /.col-lg-12 -->
+		</div>
+		
+	    <div class="row">
+		      <div class="col-md-2"></div>
+			  <div class="col-md-6">
+			  	<input id="inputFile" name="inputFile" type="file" class="file" data-show-preview="false"/>  
+			  </div>
+			  <div class="col-md-2"><button class="btn btn-success"><span class="glyphicon glyphicon-import"></span>保存（导入）</button></div>
+			  <div class="col-md-2"></div>
+		</div>
+		<hr class="simple" color="#6f5499" />
+		
+		<div class="row">
+			<div class="col-md-4"><p class="p-like-btn bg-success">电池包数量:</p></div>
+			<div class="col-md-4"><p class="p-like-btn bg-info">模块数量:</p></div>
+			<div class="col-md-4"><p class="p-like-btn bg-warning">电芯数量:</p></div>
+		</div>
+		
+		<hr class="simple" color="#6f5499" />
+		<table id="dataTables-results" class="table table-bordered">
+		<thead>
+			<tr>
+			  <th>订单号</th>
+			  <th>电池包编码</th>
+			  <th>模块编码</th>
+			  <th>电芯编码</th>
+			  <th>电池包物料编码</th>
+			  <th>模块物料编码</th>
+			  <th>模块物料编码</th>
+			  <th>电芯物料编码</th>
+			 </tr>
+		</thead>
+		<tbody></tbody>		  
+		</table>
+  	</div>
+    <!-- jQuery -->
+	<script th:src="@{/jQuery3/jquery-3.3.1.min.js}"></script>
+	
+	<script
+		src="../bootstrap-fileinput/js/plugins/piexif.js"
+		th:src="@{/bootstrap-fileinput/js/plugins/piexif.js}"></script>	
+	
+	<script
+		src="../bootstrap-fileinput/js/plugins/purify.js"
+		th:src="@{/bootstrap-fileinput/js/plugins/purify.js}"></script>
+	
+	<script
+		src="../bootstrap-fileinput/js/plugins/sortable.js"
+		th:src="@{/bootstrap-fileinput/js/plugins/sortable.js}"></script>		
+    <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+    <!-- Bootstrap Core JavaScript -->
+	<script src="../home/vendor/bootstrap/js/bootstrap.min.js"
+		th:src="@{/home/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<!-- DataTables JavaScript -->
+	<script src="../home/vendor/datatables/js/jquery.dataTables.min.js"
+		th:src="@{/home/vendor/datatables/js/jquery.dataTables.min.js}"></script>
+	<script
+		src="../home/vendor/datatables-plugins/dataTables.bootstrap.min.js"
+		th:src="@{/home/vendor/datatables-plugins/dataTables.bootstrap.min.js}"></script>
+	<script
+		src="../home/vendor/datatables-responsive/dataTables.responsive.js"
+		th:src="@{/home/vendor/datatables-responsive/dataTables.responsive.js}"></script>
+		
+	<script
+		src="../bootstrap-fileinput/js/fileinput.js"
+		th:src="@{/bootstrap-fileinput/js/fileinput.js}"></script>	
+		
+	<script
+		src="../bootstrap-fileinput/js/locales/zh.js"
+		th:src="@{/bootstrap-fileinput/js/locales/zh.js}"></script>
+
+		
+	<script type="text/javascript">
+	$(document).on('ready', function() {
+		initDataTable();
+		initUpLoadFiles();
+		
+	});
+	
+	
+	function initUpLoadFiles()
+	{
+		$("#inputFile").fileinput({
+
+			showPreview: false,
+	        allowedFileExtensions: ["jpg", "jpeg", "gif", "png"],
+	        elErrorContainer: "#errorBlock"
+
+       });
+	}
+		
+		
+	/*初始化表格
+	 */
+	function initDataTable() {
+
+		var table = $('#dataTables-results').DataTable({
+
+			"lengthChange" : false,//是否允许角色改变表格每页显示的记录数
+			"searching" : false,//是否允许Datatables开启本地搜索
+			"language" : {
+				"emptyTable" : "没有数据",
+				"infoEmpty" : "无预览数据显示",
+				"paginate" : {
+					"previous" : "上一页",
+					"next" : "下一页",
+					"last" : "尾页"
+				}
+			},
+			"columnDefs" : [  ]
+
+		});
+
+	}
+	
+		
+		
+	</script>
+	
+	
+  </body>
+</html>
