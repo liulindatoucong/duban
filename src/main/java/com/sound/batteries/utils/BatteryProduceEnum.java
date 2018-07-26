@@ -8,7 +8,7 @@ package com.sound.batteries.utils;
  */
 public enum BatteryProduceEnum {
 	
-	RESULTCODE0("1", "请求正确"),
+	RESULTCODE0("0", "请求正确"),
 	RESULTCODE1001("1001","token不合法或无权限"),
 	RESULTCODE1002("1002","参数缺失"),
 	RESULTCODE1003("1003","令牌为空"),

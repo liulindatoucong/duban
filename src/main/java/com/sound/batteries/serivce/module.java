@@ -42,7 +42,7 @@ public class module {
         //1.主机厂车辆生产
         //createVehiclePack();
         //2.电池厂电池生产
-        //createBatteryPack();
+        createBatteryPack();
         //3.主机厂车辆销售
         //createSale();
         //4.电池厂售后
@@ -66,7 +66,7 @@ public class module {
         //13.电池厂电池退役
         //createRetireFactory();
 
-        test();
+//        test();
 
         long end = System.currentTimeMillis();
         System.out.println("完成" + (end - start));
@@ -95,22 +95,22 @@ public class module {
 
     public static void createBatteryPack(){
         List<String> cellList1=new ArrayList<>();
-        cellList1.add("C111");
+        cellList1.add("031CE05008524A853050463611");
         Map<String,Object> module1=new HashMap<>();
-        module1.put("code","M110");
+        module1.put("code","erer11");
         module1.put("cellList",cellList1);
-        module1.put("modelId","zhangM");
-        module1.put("cellModelId","zhangC");
+        module1.put("modelId","adfadsf");
+        module1.put("cellModelId","zhangffCdfdf");
         List<Map<String,Object>> moduleList1=new ArrayList<>();
         moduleList1.add(module1);
         Map<String,Object> pack1=new HashMap<>();
-        pack1.put("code","P100");
+        pack1.put("code","Prrr155500");
         pack1.put("moduleList",moduleList1);
-        pack1.put("serial","1");
-        pack1.put("modelId","zhangP");
-        pack1.put("systemId","S001");
-        pack1.put("systemModelId","zhangS");
-        pack1.put("orderNo","o001");
+        pack1.put("serial","31fff");
+        pack1.put("modelId","adfadsf");
+        pack1.put("systemId","S0f01ffff");
+        pack1.put("systemModelId","adf11");
+        pack1.put("orderNo","adfadf");
         List<Map<String,Object>> packList=new ArrayList<>();
         packList.add(pack1);
         HttpResponse response = send(ip1+"/bitnei/v1.0/battery/vehicle/receiveBatteryProduce", packList, factory_token, factory_key);
@@ -519,7 +519,7 @@ public class module {
 
     public static void test(){
         try {
-            String data="{\"systemId\":\"1111333\",\"code\":\"031PE0032X05AA85N0300123\",\"moduleList\":[{\"cellModelId\":\"SEPNi8688190-15Ah\",\"code\":\"031ME00F2X05AA85K0301261\",\"modelId\":\"8688190-4P\",\"cellList\":[\"031CE05008523A8530101744\",\"031CE05008523A8530103043\",\"031CE05008524A8520502468\",\"031CE05008524A8530504838\"]},{\"cellModelId\":\"SEPNi8688190-15Ah\",\"code\":\"031ME00F2X05AA85K0301264\",\"modelId\":\"8688190-4P\",\"cellList\":[\"031CE05008524A8530505037\",\"031CE05008523A8530103945\",\"031CE05008523A8530101713\",\"031CE05008523A8530103008\"]},{\"cellModelId\":\"SEPNi8688190-15Ah\",\"code\":\"031ME00F2X05AA85K0301265\",\"modelId\":\"8688190-4P\",\"cellList\":[\"031CE05008524A8520200205\",\"031CE05008524A8520501236\",\"031CE05008524A8530302959\",\"031CE05008524A8530300984\"]},{\"cellModelId\":\"SEPNi8688190-15Ah\",\"code\":\"031ME00F2X05AA85K0301262\",\"modelId\":\"8688190-4P\",\"cellList\":[\"031CE05008524A8530502054\",\"031CE05008523A8530102049\",\"031CE05008524A8530504205\",\"031CE05008524A8530504600\"]},{\"cellModelId\":\"SEPNi8688190-15Ah\",\"code\":\"031ME00F2X05AA85K0301266\",\"modelId\":\"8688190-4P\",\"cellList\":[\"031CE05008524A8530504636\",\"031CE05008524A84Y0205616\",\"031CE05008524A8530300968\",\"031CE05008523A8530102470\"]},{\"cellModelId\":\"SEPNi8688190-15Ah\",\"code\":\"031ME00F2X05AA85K0301263\",\"modelId\":\"8688190-4P\",\"cellList\":[\"031CE05008523A8530102045\",\"031CE05008524A8530301326\",\"031CE05008524A8530504618\",\"031CE05008524A8530502019\"]},{\"cellModelId\":\"SEPNi8688190-15Ah\",\"code\":\"031ME00F2X05AA85K0301267\",\"modelId\":\"8688190-4P\",\"cellList\":[\"031CE05008523A8530102343\",\"031CE05008524A84W0602111\",\"031CE05008524A8530504638\",\"031CE05008523A8530102345\"]}],\"systemModelId\":\"STJ-HSD-H01-45.68-1\",\"serial\":\"ffff111\",\"modelId\":\"STJ-HSD-H01-45.68-1\",\"orderCode\":\"51000009\"}";
+        	String data = "{\"systemId\":\"33\",\"code\":\"031PE0032X05AA85N0300123\",\"orderNo\":\"51000009\",\"moduleList\":[{\"cellModelId\":\"SEPNi868819015Ah\",\"code\":\"031ME00F2X05AA85K0301261\",\"modelId\":\"86881904P\",\"cellList\":[\"031CE05008523A8530101744\",\"031CE05008523A8530103043\",\"031CE05008524A8520502468\",\"031CE05008524A8530504838\"]}],\"systemModelId\":\"STJHSDH0145681\",\"serial\":\"2\",\"modelId\":\"STJHSDH0145681\"}";
             String url=ip1+"/bitnei/v1.0/battery/vehicle/receiveBatteryProduce";
             String token=vehicle_token;
             String key=vehicle_key;

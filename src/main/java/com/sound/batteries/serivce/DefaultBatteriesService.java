@@ -313,7 +313,7 @@ public class DefaultBatteriesService implements BatteriesServiceInterface {
 		Date startDate = new Date();
 		String responseMsg = "";
 		String requestMsg = "";
-		String status = "";
+		String status = "Y";
 		try {
 			List<String> moduleHandle = new ArrayList<String>();
 			List<String> cellHandle = new ArrayList<String>();
@@ -331,11 +331,12 @@ public class DefaultBatteriesService implements BatteriesServiceInterface {
 			requestMsg = new JsonSerializer().deep(true).serialize(packInfos);
 					
 			Map map = send(requestMsg);	
-			analysisReturnInfo(map, bpc.getPackhandle(), moduleHandle, cellHandle, status);
+			analysisReturnInfo(map, bpc.getPackhandle(), moduleHandle, cellHandle);
 	        responseMsg = new JsonSerializer().deep(true).serialize(map);
 		}
 		catch(Exception e)
 		{
+			status = "N";
 			responseMsg = responseMsg + e.getMessage();
 			throw e;
 		}
@@ -354,25 +355,33 @@ public class DefaultBatteriesService implements BatteriesServiceInterface {
 	 * @param map
 	 * @throws Exception 
 	 */
-	private void analysisReturnInfo(Map map,String packHandle, List<String> moduleHandle, List<String> cellHandle, String status) throws Exception
+	private void analysisReturnInfo(Map map,String packHandle, List<String> moduleHandle, List<String> cellHandle) throws Exception
 	{
 		String code = String.valueOf( map.get("code"));
+		String result="";
 		if(BatteryProduceEnum.RESULTCODE0.code.equals(code))
 		{
-			status = "Y";
-			updateStatus(packHandle, moduleHandle, cellHandle);
+	        if(isNotEmpty(map.get("data")))
+	        {
+	            result = AESClass.decrypt(map.get("data").toString());
+	            throw new Exception(result);
+	        }
+	        else 
+	        {
+	            result = AESClass.decrypt(map.get("msg").toString());
+	            if("OK".equals(result))
+	            {
+	            	updateStatus(packHandle, moduleHandle, cellHandle);
+	            }
+	        }
+
+			
 		}
 		else
 		{
-			status = "N";
-			String result="";
-	        if(isNotEmpty(map.get("data"))){
-	            result = AESClass.decrypt(map.get("data").toString());
-	        }else {
-	            result = AESClass.decrypt(map.get("msg").toString());
-	        }
-	        String errorMsg = BatteryProduceEnum.getDes(code);
-	        throw new Exception(result + " : " + errorMsg);
+			result = AESClass.decrypt(map.get("msg").toString());
+	        String errorMsg = BatteryProduceEnum.getDes(result+"  "+code);
+	        throw new Exception(errorMsg);
 		}
 	}
 	
