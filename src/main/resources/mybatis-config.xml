@@ -22,5 +22,11 @@
 		<mapper resource="com/sound/roles/mybatis/mapper/roles.xml" />
 		<!-- 组织架构 -->
 		<mapper resource="com/sound/wss/mybatis/mapper/org.xml" />
+		<!-- 预览 -->
+		<mapper resource="com/sound/batteries/mybatis/mapper/preview.xml"/>
+		<!-- 电芯上传操作 -->
+		<mapper resource="com/sound/batteries/mybatis/mapper/batteriesInfo.xml"/>
+		<!-- 电芯上传物料信息 -->
+		<mapper resource="com/sound/batteries/mybatis/mapper/metrial.xml"/>
 	</mappers>
 </configuration>

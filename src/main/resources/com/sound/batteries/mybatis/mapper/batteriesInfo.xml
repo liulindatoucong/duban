@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Copyright 2015-2016 the original author or authors. Licensed under the 
+	Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+	Unless required by applicable law or agreed to in writing, software distributed 
+	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+	the specific language governing permissions and limitations under the License. -->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sound.batteries.mybatis.mapper.BatteriesInfoMapper">
+
+	<resultMap id="btsMoudlecellMap" type="com.sound.batteries.mybatis.model.BtsMoudlecell">
+		<result property="cellhandle" column="CELLHANDLE" />
+		<result property="moudlehandle" column="MOUDLEHANDLE" />
+		<result property="moudlecode" column="MOUDLECODE" />
+		<result property="cellcode" column="CELLCODE" />
+		<result property="cellmaterial" column="CELLMATERIAL" />
+		<result property="status" column="STATUS" />
+	</resultMap>
+
+	<resultMap type="com.sound.batteries.mybatis.model.BtsPackcode" id="btsPackcodeMap">
+		<result property="packhandle" column="PACKHANDLE" />
+		<result property="plant" column="PLANT" />
+		<result property="packcode" column="PACKCODE" />
+		<result property="packmaterial" column="PACKMATERIAL" />
+		<result property="packorder" column="PACKORDER" />
+		<result property="status" column="STATUS" />
+		<result property="createtime" column="CREATETIME" />
+		<result property="createuser" column="CREATEUSER" />
+		<result property="changetime" column="CHANGETIME" />
+		<result property="changeuser" column="CHANGEUSER" />
+		<result property="uploadtime" column="UPLOADTIME" />
+		<result property="uploaduser" column="UPLOADUSER" />
+	</resultMap>
+
+	<resultMap type="com.sound.batteries.mybatis.model.BtsPackmodule" id="btsPackmoduleMap">
+		<result property="moudlehandle" column="MOUDLEHANDLE" />
+		<result property="packhandle" column="PACKHANDLE" />
+		<result property="packcode" column="PACKCODE" />
+		<result property="moudlecode" column="MOUDLECODE" />
+		<result property="moudlematerial" column="MOUDLEMATERIAL" />
+		<result property="status" column="STATUS" />		
+	</resultMap>
+	
+	<resultMap type="com.sound.batteries.mybatis.model.BtsUploadLog" id="btsuploadMap">
+		<result property="handle" column="HANDLE" />
+		<result property="plant" column="PLANT" />
+		<result property="requestmsg" column="REQUESTMSG" />
+		<result property="responsemsg" column="RESPONSEMSG" />
+		<result property="ip" column="IP" />
+		<result property="status" column="STATUS" />		
+		<result property="starttime" column="STARTTIME" />		
+		<result property="endtime" column="ENDTIME" />		
+		<result property="user" column="USER" />		
+	</resultMap>
+	
+	<insert id="savePackFromPreview" parameterType="String">
+		INSERT INTO BTS_PACKCODE(PACKHANDLE, PLANT, PACKCODE, PACKMATERIAL, PACKORDER, STATUS, CREATETIME, CREATEUSER, CHANGETIME, CHANGEUSER, UPLOADTIME, UPLOADUSER) 
+		SELECT PACKHANDLE, PLANT, PACKCODE, PACKMATERIAL, PACKORDER, STATUS, CREATETIME, CREATEUSER, CHANGETIME, CHANGEUSER, UPLOADTIME, UPLOADUSER FROM BTS_PACKCODE_PREVIEW
+		WHERE CREATEUSER = #{username} 
+	</insert>
+	
+	<insert id="saveModuleFromPreview" parameterType="String">
+		INSERT INTO BTS_PACKMODULE(MOUDLEHANDLE, PACKHANDLE, PACKCODE, MOUDLECODE, MOUDLEMATERIAL, STATUS) 
+		SELECT MODULEPRE.MOUDLEHANDLE, MODULEPRE.PACKHANDLE, MODULEPRE.PACKCODE, MODULEPRE.MOUDLECODE, MODULEPRE.MOUDLEMATERIAL, MODULEPRE.STATUS 
+		FROM BTS_PACKMODULE_PREVIEW MODULEPRE INNER JOIN BTS_PACKCODE_PREVIEW PACKPRE ON MODULEPRE.PACKHANDLE = PACKPRE.PACKHANDLE
+		WHERE PACKPRE.CREATEUSER = #{username}
+	</insert>
+	
+	
+	<insert id="saveCellFromPreview" parameterType="String">
+		INSERT INTO BTS_MOUDLECELL(CELLHANDLE, MOUDLEHANDLE, MOUDLECODE, CELLCODE, CELLMATERIAL, STATUS)
+		SELECT CELLPRE.CELLHANDLE, CELLPRE.MOUDLEHANDLE, CELLPRE.MOUDLECODE, CELLPRE.CELLCODE, CELLPRE.CELLMATERIAL, CELLPRE.STATUS
+		FROM BTS_MOUDLECELL_PREVIEW CELLPRE INNER JOIN BTS_PACKMODULE_PREVIEW MODULEPRE ON CELLPRE.MOUDLEHANDLE = MODULEPRE.MOUDLEHANDLE
+		INNER JOIN BTS_PACKCODE_PREVIEW PACKPRE ON MODULEPRE.PACKHANDLE = PACKPRE.PACKHANDLE
+		WHERE PACKPRE.CREATEUSER = #{username}
+	</insert>
+	
+	<select id="getNeedUploadBtsPackcodeByUser" parameterType="String" resultMap="btsPackcodeMap">
+		SELECT PACKHANDLE, PLANT, PACKCODE, PACKMATERIAL, PACKORDER, STATUS, CREATETIME, CREATEUSER, CHANGETIME, CHANGEUSER, UPLOADTIME, UPLOADUSER
+		FROM BTS_PACKCODE
+		WHERE CREATEUSER = #{username} AND STATUS = '10'
+	</select>
+	
+	<select id="getNeedUploadBtsPackmoduleByPackHandle" parameterType="String" resultMap="btsPackmoduleMap">
+		SELECT MOUDLEHANDLE, PACKHANDLE, PACKCODE, MOUDLECODE, MOUDLEMATERIAL, STATUS
+		FROM BTS_PACKMODULE
+		WHERE PACKHANDLE = #{packhandle} AND STATUS = '10'
+	</select>
+	
+	<select id="getNeedUploadbtsMoudlecellByModuleHandle" parameterType="String" resultMap="btsMoudlecellMap">
+		SELECT CELLHANDLE, MOUDLEHANDLE, MOUDLECODE, CELLCODE, CELLMATERIAL, STATUS
+		FROM BTS_MOUDLECELL
+		WHERE MOUDLEHANDLE = #{modulehandle} AND STATUS = '10'
+	</select>
+	
+	<update id="updateNeedUploadBtsPackcode" parameterType="String">
+		UPDATE BTS_PACKCODE SET STATUS = '30' WHERE PACKHANDLE = #{packhandle}
+	</update>
+	
+	<update id="updateNeedUploadBtsPackmodule" parameterType="java.util.List">
+		UPDATE BTS_PACKMODULE SET STATUS = '30' WHERE MOUDLEHANDLE IN
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+                #{item}       
+        </foreach> 
+	</update>
+	
+	<update id="updateNeedUploadbtsMoudlecell" parameterType="java.util.List">
+		UPDATE BTS_MOUDLECELL SET STATUS = '30' WHERE CELLHANDLE IN
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+                #{item}       
+        </foreach>
+	</update>
+	
+	
+	<insert id="insertUploadLog" parameterType="com.sound.batteries.mybatis.model.BtsUploadLog">
+		INSERT INTO BTS_UPLOADLOG(HANDLE, PLANT, REQUESTMSG, RESPONSEMSG, IP, STATUS, STARTTIME, ENDTIME, USER)
+		VALUES(#{handle}, #{plant}, #{requestmsg}, #{responsemsg}, #{ip}, #{status}, #{starttime}, #{endtime}, #{user})
+	</insert>
+</mapper>

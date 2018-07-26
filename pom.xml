@@ -137,6 +137,19 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jodd/jodd-json -->
+		<dependency>
+		    <groupId>org.jodd</groupId>
+		    <artifactId>jodd-json</artifactId>
+		    <version>5.0.3</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jodd/jodd-http -->
+		<dependency>
+		    <groupId>org.jodd</groupId>
+		    <artifactId>jodd-http</artifactId>
+		    <version>5.0.3</version>
+		</dependency>
+		
 		
 	</dependencies>
 

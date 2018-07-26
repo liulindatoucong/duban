@@ -5,6 +5,8 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta th:name="_csrf" th:content="${_csrf.token}" />
+	<meta th:name="_csrf_header" th:content="${_csrf.headerName}" />
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <title>溯源系统</title>
 
@@ -28,11 +30,6 @@
 		th:href="@{/home/vendor/datatables-responsive/dataTables.responsive.css}"
 		rel="stylesheet" type="text/css"></link>
 		
-	<!-- 引入bootstrap input css文件 -->
-	<link
-		href="../bootstrap-fileinput/css/fileinput.css"
-		th:href="@{/bootstrap-fileinput/css/fileinput.css}"
-		rel="stylesheet" type="text/css"></link>
 				
     <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
     <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
@@ -53,19 +50,22 @@
 		</div>
 		
 	    <div class="row">
-		      <div class="col-md-2"></div>
-			  <div class="col-md-6">
-			  	<input id="inputFile" name="inputFile" type="file" class="file" data-show-preview="false"/>  
+		      <div class="col-md-1"></div>
+			  <div class="col-md-4">
+				<input id="files" type="file" class="btn btn-default" />	
 			  </div>
-			  <div class="col-md-2"><button class="btn btn-success"><span class="glyphicon glyphicon-import"></span>保存（导入）</button></div>
-			  <div class="col-md-2"></div>
+			  <div class="col-md-2"><button type="button" class="btn btn-info" id="importFile"><span class="glyphicon glyphicon-list-alt"></span>导入预览</button></div>
+			  <div class="col-md-2"><button class="btn btn-success" id="importAndSend"><span class="glyphicon glyphicon-import"></span>保存（导入）</button></div>
+			  <div class="col-md-2"><button class="btn btn-danger" id="uploadInfo2JI"><span class="glyphicon glyphicon-arrow-up"></span>上传</button></div>
+			  <div class="col-md-1"><button type="button" class="btn btn-warning" id="clearBtn"><span class="glyphicon glyphicon-trash"></span>清空</button></div>
+			  
 		</div>
 		<hr class="simple" color="#6f5499" />
 		
 		<div class="row">
-			<div class="col-md-4"><p class="p-like-btn bg-success">电池包数量:</p></div>
-			<div class="col-md-4"><p class="p-like-btn bg-info">模块数量:</p></div>
-			<div class="col-md-4"><p class="p-like-btn bg-warning">电芯数量:</p></div>
+			<div class="col-md-4"><p id="packnum" class="p-like-btn bg-success">电池包数量:</p></div>
+			<div class="col-md-4"><p id="modulenum" class="p-like-btn bg-info">模块数量:</p></div>
+			<div class="col-md-4"><p id="cellnum" class="p-like-btn bg-warning">电芯数量:</p></div>
 		</div>
 		
 		<hr class="simple" color="#6f5499" />
@@ -74,31 +74,25 @@
 			<tr>
 			  <th>订单号</th>
 			  <th>电池包编码</th>
-			  <th>模块编码</th>
-			  <th>电芯编码</th>
 			  <th>电池包物料编码</th>
+			  <th>电池包物料描述</th>
+			  <th>电池包型号</th>
+			  <th>储能装置型号</th>
+			  <th>模块型号</th>
+			  <th>单体型号</th>
+			  <th>模块编码</th>
 			  <th>模块物料编码</th>
-			  <th>模块物料编码</th>
+			  <th>模块物料描述</th>
+			  <th>电芯编码</th>
 			  <th>电芯物料编码</th>
+			  <th>电芯物料描述</th>
 			 </tr>
 		</thead>
 		<tbody></tbody>		  
 		</table>
   	</div>
     <!-- jQuery -->
-	<script th:src="@{/jQuery3/jquery-3.3.1.min.js}"></script>
-	
-	<script
-		src="../bootstrap-fileinput/js/plugins/piexif.js"
-		th:src="@{/bootstrap-fileinput/js/plugins/piexif.js}"></script>	
-	
-	<script
-		src="../bootstrap-fileinput/js/plugins/purify.js"
-		th:src="@{/bootstrap-fileinput/js/plugins/purify.js}"></script>
-	
-	<script
-		src="../bootstrap-fileinput/js/plugins/sortable.js"
-		th:src="@{/bootstrap-fileinput/js/plugins/sortable.js}"></script>		
+	<script th:src="@{/jQuery3/jquery-3.3.1.min.js}"></script>	
     <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
     <!-- Bootstrap Core JavaScript -->
 	<script src="../home/vendor/bootstrap/js/bootstrap.min.js"
@@ -112,35 +106,228 @@
 	<script
 		src="../home/vendor/datatables-responsive/dataTables.responsive.js"
 		th:src="@{/home/vendor/datatables-responsive/dataTables.responsive.js}"></script>
-		
-	<script
-		src="../bootstrap-fileinput/js/fileinput.js"
-		th:src="@{/bootstrap-fileinput/js/fileinput.js}"></script>	
-		
-	<script
-		src="../bootstrap-fileinput/js/locales/zh.js"
-		th:src="@{/bootstrap-fileinput/js/locales/zh.js}"></script>
 
 		
 	<script type="text/javascript">
-	$(document).on('ready', function() {
+	$(document).ready(function() {
 		initDataTable();
-		initUpLoadFiles();
-		
+		initUploadFileBtn();
+		save();
+		clear();
+		upload2jl();
 	});
 	
-	
-	function initUpLoadFiles()
+	function upload2jl()
 	{
-		$("#inputFile").fileinput({
-
-			showPreview: false,
-	        allowedFileExtensions: ["jpg", "jpeg", "gif", "png"],
-	        elErrorContainer: "#errorBlock"
-
-       });
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+		$("#uploadInfo2JI").click(function (){
+			alert('adf');
+			$.ajax({
+                url: '../batteriesaction/upload2jl',
+                type: 'POST',
+                cache: false,
+                processData: false,
+                contentType: false,
+                beforeSend : function(xhr) {
+        			xhr.setRequestHeader(header, token);
+        		},
+        		success : function(res){
+        			if('true' != res.flag)
+       				{
+        				alert("上传失败   "+res.msg);
+       				}
+        			else
+       				{
+       					alert("上传成功");
+       				}
+        			
+        		}
+            })
+		});
 	}
-		
+	
+	function clear()
+	{
+		$("#clearBtn").click(function(){
+			$("#files").val('');
+		});
+	}
+	
+	function initUploadFileBtn()
+	{
+		$("#importFile").click(function () {
+			$('#importAndSend').prop('disabled', true);
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			var filename = $("#files").val();
+		    if(filename == null || filename == '')
+		    {
+		        return;
+		    }
+			var fileObj = $('#files')[0].files[0]; // js获取文件对象
+			var formData = new FormData();
+            formData.append("file", fileObj);
+            $.ajax({
+                url: '../batteriesaction/fileload',
+                type: 'POST',
+                cache: false,
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend : function(xhr) {
+        			xhr.setRequestHeader(header, token);
+        		},
+        		success : function(res){
+        			if('true' != res.flag)
+       				{
+        				alert(res.msg);
+       				}
+        			else
+       				{
+        				getPreInfo();
+       				}
+        		}
+            })
+		});
+	}
+	
+	function save()
+	{
+		$('#importAndSend').click(function() {
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			$.ajax({
+	            url: '../batteriesaction/saveinfo',
+	            type: 'POST',
+	            cache: false,
+	            processData: false,
+	            contentType: false,
+	            beforeSend : function(xhr) {
+	    			xhr.setRequestHeader(header, token);
+	    		},
+	    		success : function(res){
+	    			if('true' != res.flag)
+	   				{
+	    				alert(res.msg);
+	   				}
+	    			else
+	   				{
+	    				$('#importAndSend').prop('disabled', true);
+//	    				var table = $('#dataTables-results');
+//	    				table.empty();
+//	    				table.destroy();
+//	    				$('#packnum').html('电池包数量:');
+//	    				$('#modulenum').html('模块数量:');
+//	    				$('#cellnum').html('电芯数量:');
+	    				alert(res.msg);
+	   				}
+	    		}
+	        })
+		});
+	}
+	
+	function getPreInfo()
+	{
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+		$.ajax({
+            url: '../batteriesaction/getpreinfo',
+            type: 'POST',
+            cache: false,
+            processData: false,
+            contentType: false,
+            beforeSend : function(xhr) {
+    			xhr.setRequestHeader(header, token);
+    		},
+    		success : function(res){
+    			if('true' != res.flag)
+   				{
+    				alert(res.msg);
+   				}
+    			else
+   				{
+    				$('#packnum').html('电池包数量:'+res.packNum);
+    				$('#modulenum').html('模块数量:'+res.moduleNum);
+    				$('#cellnum').html('电芯数量:'+res.cellNum);
+    				createTables(res);
+   				}
+    		}
+        })
+	}
+	
+	function createTables(res)
+	{
+		if ($.fn.dataTable
+				.isDataTable('#dataTables-results')) {
+			var table = $('#dataTables-results')
+					.DataTable();
+			table.clear();
+			table.destroy();
+		}
+			var table = $('#dataTables-results')
+				.DataTable(
+						{
+
+							"lengthChange" : false,//是否允许角色改变表格每页显示的记录数
+							"searching" : false,//是否允许Datatables开启本地搜索
+							/*pagingType选项来配置
+							simple - 只有上一页、下一页两个按钮
+							simple_numbers - 除了上一页、下一页两个按钮还有页数按钮，Datatables默认是这个
+							full - 有四个按钮首页、上一页、下一页、末页
+							full_numbers - 除首页、上一页、下一页、末页四个按钮还有页数按钮
+							 */
+							"pageLength":15,
+							"pagingType" : "full_numbers",
+							"language" : {
+								"emptyTable" : "没有数据",
+								"info" : "显示 _START_ 到  _END_ 电芯信息,总计 _TOTAL_ 个电芯信息",
+								"infoEmpty" : "无数据显示",
+								"paginate" : {
+									"first" : "首页",
+									"previous" : "上一页",
+									"next" : "下一页",
+									"last" : "尾页"
+								}
+							},
+							data : res.detailinfos,
+							columns : [ 
+								{data : 'packorder'}, 
+								{data : 'packcode'}, 
+								{data : 'packmatcode'}, 
+								{data : 'packmatdesc'}, 
+								{data : 'packmodle'}, 
+								{data : 'systemmodelid'},  
+								{data : 'modelid'},
+								{data : 'cellmodelid'},
+								{data : 'moudlecode'},
+								{data : 'modulematcode'},
+								{data : 'modulematdesc'},
+								{data : 'cellcode'},
+								{data : 'cellmatcode'},
+								{data : 'cellmatdesc'}
+								],
+							"drawCallback" : function(
+									settings) {
+								var api = this
+										.api();
+								
+								　　//var startIndex= api.context[0]._iDisplayStart;//获取到本页开始的条数
+								　　api.column(0).nodes().each(function(cell, i) {
+
+								　　　　//此处 startIndex + i + 1;会出现翻页序号不连续，主要是因为startIndex 的原因,去掉即可。
+								　　　　//cell.innerHTML = startIndex + i + 1;
+
+								　　　　cell.innerHTML = new Number(i + 1).toString();
+
+								　　}); 
+							}
+
+						});
+			$('#importAndSend').prop('disabled', false);
+	}
+	
+	
 		
 	/*初始化表格
 	 */

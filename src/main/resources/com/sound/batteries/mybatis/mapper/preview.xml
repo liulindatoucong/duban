@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Copyright 2015-2016 the original author or authors. Licensed under the 
+	Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+	Unless required by applicable law or agreed to in writing, software distributed 
+	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+	the specific language governing permissions and limitations under the License. -->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sound.batteries.mybatis.mapper.PreviewMapper">
+
+	<resultMap id="btsMoudlecellPreviewMap" type="com.sound.batteries.mybatis.model.BtsMoudlecellPreview">
+		<result property="cellhandle" column="CELLHANDLE" />
+		<result property="moudlehandle" column="MOUDLEHANDLE" />
+		<result property="moudlecode" column="MOUDLECODE" />
+		<result property="cellcode" column="CELLCODE" />
+		<result property="cellmaterial" column="CELLMATERIAL" />
+		<result property="status" column="STATUS" />
+	</resultMap>
+
+	<resultMap type="com.sound.batteries.mybatis.model.BtsPackcodePreview" id="btsPackcodePreviewMap">
+		<result property="packhandle" column="PACKHANDLE" />
+		<result property="plant" column="PLANT" />
+		<result property="packcode" column="PACKCODE" />
+		<result property="packmaterial" column="PACKMATERIAL" />
+		<result property="packorder" column="PACKORDER" />
+		<result property="status" column="STATUS" />
+		<result property="createtime" column="CREATETIME" />
+		<result property="createuser" column="CREATEUSER" />
+		<result property="changetime" column="CHANGETIME" />
+		<result property="changeuser" column="CHANGEUSER" />
+		<result property="uploadtime" column="UPLOADTIME" />
+		<result property="uploaduser" column="UPLOADUSER" />
+	</resultMap>
+
+	<resultMap type="com.sound.batteries.mybatis.model.BtsPackmodulePreview" id="btsPackmodulePreviewMap">
+		<result property="moudlehandle" column="MOUDLEHANDLE" />
+		<result property="packhandle" column="PACKHANDLE" />
+		<result property="packcode" column="PACKCODE" />
+		<result property="moudlecode" column="MOUDLECODE" />
+		<result property="moudlematerial" column="MOUDLEMATERIAL" />
+		<result property="status" column="STATUS" />		
+	</resultMap>
+	
+	<resultMap type="com.sound.batteries.mybatis.model.BtsBatteriesPackDetailInfo" id="btsBatteriesPackDetailInfo">
+		<result property="packorder" column="PACKORDER" />
+		<result property="packcode" column="PACKCODE" />
+		<result property="packmatcode" column="PACKMATCODE" />
+		<result property="packmatdesc" column="PACKMATDESC" />
+		<result property="packmodle" column="PACKMODLE" />
+		<result property="systemmodelid" column="SYSTEMMODELID" />
+		<result property="modelid" column="MODELID" />
+		<result property="cellmodelid" column="CELLMODELID" />
+		<result property="moudlecode" column="MOUDLECODE" />
+		<result property="modulematcode" column="MODULEMATCODE" />
+		<result property="modulematdesc" column="MODULEMATDESC" />
+		<result property="cellcode" column="CELLCODE" />
+		<result property="cellmatcode" column="CELLMATCODE" />
+		<result property="cellmatdesc" column="CELLMATDESC" />
+	</resultMap>
+	
+
+	<!-- 插入电芯-->
+	<insert id="insertModulecellPreviews" parameterType="java.util.List">
+		INSERT INTO bts_moudlecell_preview
+		(CELLHANDLE, MOUDLEHANDLE, MOUDLECODE, CELLCODE, CELLMATERIAL, STATUS)
+		VALUES
+		<foreach collection="list" item="item" index="index"
+			separator=" , ">
+			(#{item.cellhandle},#{item.moudlehandle},#{item.moudlecode},#{item.cellcode},#{item.cellmaterial},#{item.status})
+		</foreach>
+	</insert>
+	
+	<!-- 插入pack -->
+	<insert id="insertPackcodePreviews" parameterType="java.util.List">
+		INSERT INTO bts_packcode_preview
+		(PACKHANDLE, PLANT, PACKCODE, PACKMATERIAL, PACKORDER, STATUS, CREATETIME, CREATEUSER, CHANGETIME, CHANGEUSER, UPLOADTIME, UPLOADUSER)
+		VALUES
+		<foreach collection="list" item="item" index="index"
+			separator=" , ">
+			(#{item.packhandle},#{item.plant},#{item.packcode},#{item.packmaterial},#{item.packorder},#{item.status},#{item.createtime},#{item.createuser},#{item.changetime},#{item.changeuser},#{item.uploadtime},#{item.uploaduser})
+		</foreach>
+	</insert>
+
+
+	<!-- 插入模组 -->
+	<insert id="insertPackmodulePreviews" parameterType="java.util.List">
+		INSERT INTO bts_packmodule_preview
+		(MOUDLEHANDLE, PACKHANDLE, PACKCODE, MOUDLECODE, MOUDLEMATERIAL, STATUS)
+		VALUES
+		<foreach collection="list" item="item" index="index"
+			separator=" , ">
+			(#{item.moudlehandle},#{item.packhandle},#{item.packcode},#{item.moudlecode},#{item.moudlematerial},#{item.status})
+		</foreach>
+	</insert>
+
+	<delete id="deletePackcodePreviews" parameterType="String">
+		DELETE FROM bts_packcode_preview where CREATEUSER = #{username}
+	</delete>
+	
+	<select id="checkPackcodePreviewsExists" resultMap="btsPackcodePreviewMap">
+		SELECT PACK.PACKCODE, PACK.STATUS 
+		FROM bts_packcode_preview PACKPRE INNER JOIN bts_packcode PACK ON PACKPRE.PACKCODE = PACK.PACKCODE
+	</select>
+	
+	<select id="checkPackmodulePreviewsExists" resultMap="btsPackmodulePreviewMap">
+		SELECT PACK.MOUDLECODE, PACK.STATUS
+		FROM bts_packmodule_preview PACKPRE INNER JOIN bts_packmodule PACK ON PACKPRE.MOUDLECODE = PACK.MOUDLECODE
+	</select>
+	
+	<select id="checkModulecellPreviews" resultMap="btsMoudlecellPreviewMap">
+		SELECT PACK.CELLCODE, PACK.STATUS 
+		FROM bts_moudlecell_preview PACKPRE INNER JOIN bts_moudlecell PACK ON PACKPRE.CELLCODE = PACK.CELLCODE
+	</select>
+	
+	<select id="getPreviewInfo" parameterType="String" resultMap="btsBatteriesPackDetailInfo">
+		SELECT PACK.PACKORDER, PACK.PACKCODE, BMPACK.MATERIAL PACKMATCODE, BMPACK.MATDESCRIPTION PACKMATDESC, BMPACK.PACKMODLE,
+		BMPACK.SYSTEMMODELID, BMPACK.MODELID, BMPACK.CELLMODELID, PACKMODULE.MOUDLECODE, BMMODULE.MATERIAL MODULEMATCODE, 
+		BMMODULE.MATDESCRIPTION MODULEMATDESC, MODULECELL.CELLCODE, BMCELL.MATERIAL CELLMATCODE, BMCELL.MATDESCRIPTION CELLMATDESC
+		FROM bts_packcode_preview PACK 
+		INNER JOIN bts_packmodule_preview PACKMODULE ON PACK.PACKHANDLE = PACKMODULE.PACKHANDLE
+		INNER JOIN bts_moudlecell_preview MODULECELL ON PACKMODULE.MOUDLEHANDLE = MODULECELL.MOUDLEHANDLE
+		LEFT JOIN bts_metrialinfo BMPACK ON PACK.PACKMATERIAL = BMPACK.MATERIAL
+		LEFT JOIN bts_metrialinfo BMMODULE ON PACKMODULE.MOUDLEMATERIAL = BMMODULE.MATERIAL
+		LEFT JOIN bts_metrialinfo BMCELL ON MODULECELL.CELLMATERIAL = BMCELL.MATERIAL
+		WHERE PACK.CREATEUSER = #{username}
+	</select>
+</mapper>

@@ -45,8 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.permitAll()
 
 				.antMatchers("/**/accountmaintain/index/**").hasAnyRole("USERMANAGEMENT")
-				.antMatchers("/**/roles/index/**").hasAnyRole("ROLEMENUMANAGEMENT")
-				.antMatchers("/**/batteries/index/**").hasAnyRole("ROLEMENUMANAGEMENT")
+				.antMatchers("/**/roles/index/**").hasAnyRole("ROLEMENUMANAGEMENT")	
 				// 登录页面
 				.antMatchers("/login","/login-error").permitAll()
 				// 其它认证
