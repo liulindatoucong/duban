@@ -325,8 +325,10 @@ public class DefaultBatteriesService implements BatteriesServiceInterface {
 			packInfo.put("modelId", ma.getPackmodle());
 			packInfo.put("systemId", ma.getSystemid());
 			packInfo.put("systemModelId", ma.getSystemmodelid());
-			packInfo.put("orderCode", bpc.getPackorder());
-			requestMsg = new JsonSerializer().deep(true).serialize(packInfo);
+			packInfo.put("orderNo", bpc.getPackorder());
+			List<Map<String, Object>> packInfos = new ArrayList<Map<String, Object>>();
+			packInfos.add(packInfo);
+			requestMsg = new JsonSerializer().deep(true).serialize(packInfos);
 					
 			Map map = send(requestMsg);	
 			analysisReturnInfo(map, bpc.getPackhandle(), moduleHandle, cellHandle, status);

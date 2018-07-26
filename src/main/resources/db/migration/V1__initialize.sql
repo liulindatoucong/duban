@@ -99,3 +99,5 @@ insert into `role_menu`(`id`,`role_id`,`menu_id`) values (16,5,'a14279ff-7825-11
 insert into `role_menu`(`id`,`role_id`,`menu_id`) values (17,5,'cb45d0d5-7825-11e8-ba3e-4ccc6a660ebd');
 insert into `role_menu`(`id`,`role_id`,`menu_id`) values (20,6,'93809d00-7825-11e8-ba3e-4ccc6a660ebd');
 insert into `role_menu`(`id`,`role_id`,`menu_id`) values (21,6,'d5f1c689-7825-11e8-ba3e-4ccc6a660ebd');
+
+
